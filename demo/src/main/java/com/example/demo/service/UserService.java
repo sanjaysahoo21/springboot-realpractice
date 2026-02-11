@@ -5,6 +5,10 @@ import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.Userrepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 
 import java.util.List;
 
@@ -22,6 +26,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @CacheEvict(value = "all_users", allEntries = true)
     public UserResponseDTO saveUser(UserRequestDTO userRequestDTO) {
         User user = new User();
         user.setName(userRequestDTO.getName());
@@ -33,18 +38,22 @@ public class UserService {
         return new UserResponseDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
     }
 
+    @Cacheable(value = "users", key = "#id")
     public UserResponseDTO getUserById(Long id) {
         User user = userrepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         return new UserResponseDTO(user.getId(), user.getName(), user.getEmail());
     }
 
+    @Cacheable(value = "all_users")
     public List<UserResponseDTO> getAllUsers() {
         return userrepository.findAll().stream()
                 .map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail()))
                 .toList();
     }
 
+    @CachePut(value = "users", key = "#id")
+    @CacheEvict(value = "all_users", allEntries = true)
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
         User existingUser = userrepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
@@ -58,6 +67,10 @@ public class UserService {
         return new UserResponseDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#id"),
+            @CacheEvict(value = "all_users", allEntries = true)
+    })
     public UserResponseDTO deleteUser(Long id) {
         User user = userrepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));

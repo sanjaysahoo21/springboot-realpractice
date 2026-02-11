@@ -15,10 +15,9 @@ import org.springframework.http.HttpStatus;
 
 import com.example.demo.service.UserService;
 import com.example.demo.dto.UserRequestDTO;
-import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.repository.Userrepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 @RestController
 @RequestMapping("/users/api")
@@ -55,7 +54,7 @@ public class UserController {
     @GetMapping("/getall")
     public ResponseEntity<?> getAllUsers() {
 
-        if (userService.getAllUsers() == null || userService.getAllUsers().isEmpty()) {
+        if (userrepository.findAll().isEmpty()) {
             return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
         }
 
