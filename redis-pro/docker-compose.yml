@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8082:8080"
+    environment:
+      # Connect to the Redis service defined below
+      - SPRING_DATA_REDIS_HOST=redis-pro-cache
+      - SPRING_DATA_REDIS_PORT=6379
+    depends_on:
+      - redis-pro-cache
+
+  redis-pro-cache:
+    image: redis:alpine
+    container_name: redis_pro_cache
+    ports:
+      - "6380:6379"
