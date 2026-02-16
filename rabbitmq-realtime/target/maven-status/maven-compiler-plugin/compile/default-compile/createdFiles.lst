@@ -1,0 +1,5 @@
+com/example/rabbitmq_realtime/controller/RabbitController.class
+com/example/rabbitmq_realtime/RabbitmqRealtimeApplication.class
+com/example/rabbitmq_realtime/publisher/MessagePublisher.class
+com/example/rabbitmq_realtime/config/RabbitMQConfig.class
+com/example/rabbitmq_realtime/consumer/MessageConsumer.class
